@@ -38,17 +38,3 @@ class GraphQLClient:
     def request(self, query: Operation) -> Dict[str, Any]:
         """Make a request."""
         return self._endpoint(query)
-
-
-if __name__ == '__main__':
-    client = GraphQLClient()
-    # Создать мутацию add_book
-    query_request = client.mutation(name='registerAccount')
-    # Создать входные данные для запроса
-    register_request = schema.RegistrationInput(
-        login='book_title',
-        email='book_author@mail.ru',
-        password='book_author'
-    )
-    query_request.register_account(registration=register_request)
-    client.request(query=query_request)
