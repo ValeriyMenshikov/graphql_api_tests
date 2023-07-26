@@ -1,6 +1,8 @@
 from typing import Any, Dict
+
+import structlog
 from sgqlc.endpoint.http import HTTPEndpoint
-from utils.utils import log_graphql_request
+from graphql_client.utils import log_graphql_request
 from sgqlc.operation import Operation
 from sgqlc.types import Schema
 

@@ -1,3 +1,4 @@
+import pprint
 import uuid
 from datetime import datetime
 from typing import Any, Dict, Optional, Union
@@ -21,13 +22,15 @@ def log_graphql_request(func):
         response = func(*args, **kwargs)
         end_time = datetime.now()
         elapsed_time = str(end_time - start_time)
-
-        # pprint.pp(kwargs.get("query"))
+        query = kwargs.get("query")
+        if query:
+            print('\ngraphQL QUERY:')
+            pprint.pp(query)
         create_graphql_log(
             log_bind=__logger__.bind(request_id=str(uuid.uuid4())),
             endpoint=client_instance._endpoint,
             host=client_instance.service_name,
-            query=kwargs.get("query") or args[1],
+            query=query or args[1],
             response=response,
             elapsed_time=elapsed_time,
         )
@@ -45,7 +48,6 @@ def create_graphql_log(
         elapsed_time: str,
 ):
     """Create log"""
-    print(query.__dict__)
     log_bind.msg(
         "request",
         url=endpoint.url,
