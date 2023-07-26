@@ -3,6 +3,7 @@ from datetime import datetime
 from dm_api_account.account_api import GraphQLAccountApi
 from collections import namedtuple
 
+from mailhog_api.client import MailhogApi
 
 
 @pytest.fixture
@@ -18,5 +19,11 @@ def prepare_user():
 
 @pytest.fixture
 def graphql_account_api():
-    client = GraphQLAccountApi(service_name='http://5.63.153.31:5051/')
+    client = GraphQLAccountApi(service_name='http://5.63.153.31:5051')
+    return client
+
+
+@pytest.fixture
+def mailhog_api():
+    client = MailhogApi(host='http://5.63.153.31:5025')
     return client
