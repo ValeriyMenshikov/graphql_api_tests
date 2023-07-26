@@ -9,7 +9,7 @@ class GraphQLClient:
 
     def __init__(
             self,
-            service_name="http://localhost:5051/",
+            service_name="http://5.63.153.31:5051/",
             endpoint="graphql/",
             disable_log: bool = False
     ):
