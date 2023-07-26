@@ -45,7 +45,7 @@ def create_graphql_log(
         elapsed_time: str,
 ):
     """Create log"""
-
+    print(query.__dict__)
     log_bind.msg(
         "request",
         url=endpoint.url,
