@@ -34,6 +34,13 @@ class GraphQLAccountApi:
         )
 
     def register_user(self, login: str, email: str, password: str) -> AccountRegisterResponse:
+        """
+        Регистрация пользователя.
+        :param login:
+        :param email:
+        :param password:
+        :return:
+        """
         mutation_request = self.client.mutation(name='registerAccount')
         registration_input = RegistrationInput(
             login=login,
@@ -48,7 +55,8 @@ class GraphQLAccountApi:
     @staticmethod
     def _convert_to_model(response: dict, query_name: str, model: ContainerTypeMeta):
         """
-
+        Метод преобразует json dict ответ в соответсвующую ResponseModel, в противном случае отдает
+        полный json dict
         :param response: GraphQL response
         :param query_name: mutation or query name
         :param model: GraphQL response model from schema
@@ -60,6 +68,11 @@ class GraphQLAccountApi:
         return response
 
     def account_current(self, access_token: str) -> EnvelopeOfUserDetails | dict:
+        """
+        Получение текущего пользователя.
+        :param access_token:
+        :return:
+        """
         query_name = 'accountCurrent'
         query_request = self.client.query(name=query_name)
         query_request.account_current(access_token=access_token)
@@ -121,6 +134,11 @@ class GraphQLAccountApi:
         return response
 
     def activate_account(self, activation_token: str) -> EnvelopeOfUser | dict:
+        """
+        Активация пользователя.
+        :param activation_token:
+        :return:
+        """
         query_name = 'activateAccount'
         mutation_request = self.client.mutation(name=query_name)
         mutation_request.activate_account(activation_token=activation_token)
@@ -133,6 +151,13 @@ class GraphQLAccountApi:
         return response
 
     def login_account(self, login: str, password: str, remember_me: bool) -> AccountLoginResponse | dict:
+        """
+        Авторизация пользователя.
+        :param login:
+        :param password:
+        :param remember_me:
+        :return:
+        """
         query_name = 'loginAccount'
         mutation_request = self.client.mutation(name=query_name)
         login_credentials_input = LoginCredentialsInput(
