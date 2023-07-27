@@ -12,7 +12,9 @@ from schema.dm_api_schema import (
     LoginCredentialsInput,
     AccountLoginResponse,
     PagingQueryInput,
-    AccountsResponse
+    AccountsResponse,
+    GeneralUser,
+    PagingResult
 )
 from graphql_client.client import GraphQLClient
 
@@ -73,22 +75,43 @@ class GraphQLAccountApi:
 
     def accounts(
             self,
-            accounts_fields: AccountsResponse.__field_names__ = AccountsResponse.__field_names__,
-            with_inactive=True,
-
+            accounts_fields: EnvelopeOfUserDetails | tuple = (),
+            users_fields: GeneralUser | tuple = (),
+            paging_fields: PagingResult | tuple = (),
+            skip: int = 0,
+            number: int = 0,
+            size: int = 10,
+            with_inactive: bool = True,
     ) -> AccountsResponse | dict:
+        """
+
+        :param accounts_fields: tuple of fields from EnvelopeOfUserDetails.__fields__
+        :param users_fields: tuple of fields from GeneralUser.__fields__
+        :param paging_fields: tuple of fields from PagingResult.__fields__
+        :param skip:
+        :param number:
+        :param size:
+        :param with_inactive:
+        :return:
+        """
         query_name = 'accounts'
         query_request = self.client.query(name=query_name)
         query = PagingQueryInput(
-            skip=0,
-            number=0,
-            size=10
+            skip=skip,
+            number=number,
+            size=size
         )
+        accounts = accounts_fields or ()
+        users = users_fields or ()
+        paging = paging_fields or ()
         query_request.accounts(paging=query, with_inactive=with_inactive)
-        # TODO разобраться с полями и перенести в класс АПИ
 
-        query_request.accounts.__fields__('users')
-        query_request.accounts.users.__fields__('user_id')
+        if accounts:
+            query_request.accounts.__fields__(*accounts)
+        else:
+            query_request.accounts.users.__fields__(*users)
+            query_request.accounts.paging.__fields__(*paging)
+
         response = self.client.request(query=query_request)
         response = self._convert_to_model(
             response=response,
