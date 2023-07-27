@@ -1,5 +1,5 @@
 from sgqlc.types import ContainerTypeMeta
-from dm_api_account.schema.schema import (
+from apis.dm_api_account.graphql.schema.schema import (
     schema,
     RegistrationInput,
     AccountRegisterResponse,
@@ -12,7 +12,7 @@ from dm_api_account.schema.schema import (
     GeneralUser,
     PagingResult
 )
-from graphql_client.client import GraphQLClient
+from commons.graphql_client.client import GraphQLClient
 
 
 class GraphQLAccountApi:

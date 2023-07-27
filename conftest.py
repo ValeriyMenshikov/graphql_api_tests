@@ -1,9 +1,8 @@
 import pytest
 from datetime import datetime
-from dm_api_account.account_api import GraphQLAccountApi
+from apis.dm_api_account.graphql.account_api import GraphQLAccountApi
 from collections import namedtuple
-
-from mailhog_api.client import MailhogApi
+from apis.mailhog_api.client import MailhogApi
 
 
 @pytest.fixture

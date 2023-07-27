@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional, Union
 import structlog
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
+from functools import wraps
 
 __logger__ = structlog.get_logger(__name__).bind(service="GraphQL")
 
@@ -12,6 +13,7 @@ __logger__ = structlog.get_logger(__name__).bind(service="GraphQL")
 def log_graphql_request(func):
     """Decorator to log a graphql request"""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         client_instance = args[0]
 
