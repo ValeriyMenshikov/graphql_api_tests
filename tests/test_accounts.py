@@ -5,4 +5,3 @@ def test_accounts(graphql_account_api):
         users_fields=users_fields,
         paging_fields=paging_fields
     )
-    print(result)
