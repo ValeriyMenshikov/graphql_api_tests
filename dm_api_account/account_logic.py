@@ -1,10 +1,8 @@
 from sgqlc.types import ContainerTypeMeta
-from schema.dm_api_schema import (
-    dm_api_schema,
+from dm_api_account.base_client import AccountClient
+from dm_api_account.schema.schema import (
     RegistrationInput,
     AccountRegisterResponse,
-    Mutation,
-    Query,
     EnvelopeOfUserDetails,
     EnvelopeOfUser,
     LoginCredentialsInput,
@@ -14,24 +12,11 @@ from schema.dm_api_schema import (
     GeneralUser,
     PagingResult
 )
-from graphql_client.client import GraphQLClient
 
 
 class GraphQLAccountApi:
-    def __init__(
-            self,
-            service_name: str = '',
-            endpoint: str = "/graphql/",
-            disable_log: bool = False,
-            base_headers: dict = None
-    ):
-        self.client = GraphQLClient(
-            service_name=service_name,
-            endpoint=endpoint,
-            disable_log=disable_log,
-            base_headers=base_headers,
-            schema=dm_api_schema
-        )
+    def __init__(self):
+        self.client = AccountClient()
 
     def register_user(self, login: str, email: str, password: str) -> AccountRegisterResponse:
         """

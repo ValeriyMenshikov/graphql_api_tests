@@ -1,38 +1,38 @@
+from abc import ABC, abstractmethod
 from typing import Any, Dict
 from sgqlc.endpoint.http import HTTPEndpoint
-from graphql_client.utils import log_graphql_request
 from sgqlc.operation import Operation
-from sgqlc.types import Schema
 
 
-class GraphQLClient:
+class BaseGraphQLClient(ABC):
+    @property
+    @abstractmethod
+    def service_name(self):
+        pass
 
-    def __init__(
-            self,
-            schema: Schema,
-            service_name: str,
-            endpoint: str = "graphql/",
-            disable_log: bool = False,
-            base_headers: dict = None
-    ):
-        self.schema = schema
-        self.disable_log = disable_log
-        self.service_name = service_name
-        self.endpoint = endpoint
-        self._endpoint = HTTPEndpoint(self.service_name + self.endpoint)
+    @property
+    @abstractmethod
+    def endpoint(self):
+        pass
 
-        if base_headers:
-            self._endpoint.base_headers = base_headers
+    def __init__(self):
+        api_url = self.service_name + self.endpoint
+        self._endpoint = HTTPEndpoint(api_url, base_headers=self.authorize())
 
-    def set_headers(self, headers: dict) -> None:
-        self._endpoint.base_headers = headers
+    @staticmethod
+    def authorize() -> dict:
+        """
+        Authorization headers one wants to add.
 
-    def query(self, name: str) -> Operation:
-        return Operation(self.schema.Query, name)
+        :return: Headers to add to every request
+        """
+        return {}
 
-    def mutation(self, name: str) -> Operation:
-        return Operation(self.schema.Mutation, name)
+    def make_request(self, query: Operation) -> Dict[str, Any]:
+        """
+        Public method to make a request
 
-    @log_graphql_request
-    def request(self, query: Operation) -> Dict[str, Any]:
+        :param query: Operation
+        :return: GraphQL Response
+        """
         return self._endpoint(query)
