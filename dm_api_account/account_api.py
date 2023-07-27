@@ -1,5 +1,3 @@
-from typing import Union, Tuple
-
 from sgqlc.types import ContainerTypeMeta
 from schema.dm_api_schema import (
     dm_api_schema,
@@ -35,7 +33,7 @@ class GraphQLAccountApi:
             schema=dm_api_schema
         )
 
-    def register_user(self, login=None, email=None, password=None) -> AccountRegisterResponse:
+    def register_user(self, login: str, email: str, password: str) -> AccountRegisterResponse:
         mutation_request = self.client.mutation(name='registerAccount')
         registration_input = RegistrationInput(
             login=login,
@@ -61,7 +59,7 @@ class GraphQLAccountApi:
             return model(json_data)
         return response
 
-    def account_current(self, access_token) -> EnvelopeOfUserDetails | dict:
+    def account_current(self, access_token: str) -> EnvelopeOfUserDetails | dict:
         query_name = 'accountCurrent'
         query_request = self.client.query(name=query_name)
         query_request.account_current(access_token=access_token)
@@ -75,19 +73,24 @@ class GraphQLAccountApi:
 
     def accounts(
             self,
-            accounts_fields: EnvelopeOfUserDetails | tuple = (),
-            users_fields: GeneralUser | tuple = (),
-            paging_fields: PagingResult | tuple = (),
+            accounts_fields: tuple[AccountsResponse.__field_names__] = (),
+            users_fields: tuple[GeneralUser.__field_names__] = (),
+            paging_fields: tuple[PagingResult.__field_names__] = (),
             skip: int = 0,
             number: int = 0,
             size: int = 10,
             with_inactive: bool = True,
     ) -> AccountsResponse | dict:
         """
+        Метод получения списка всех активированных пользователей с пагинацией.
+        Метод принимает значения указанные в полях accounts_fields, users_fields, paging_fields.
+        Так как accounts_fields являются более верхне уровневыми полями, то если мы указываем эти значения, значения
+        из users_fields, paging_fields игнорируются. Если хотим получить значения из users_fields, paging_fields,
+        то accounts_fields можно не указывать.
 
-        :param accounts_fields: tuple of fields from EnvelopeOfUserDetails.__fields__
-        :param users_fields: tuple of fields from GeneralUser.__fields__
-        :param paging_fields: tuple of fields from PagingResult.__fields__
+        :param accounts_fields: Кортеж с одним и более значений из AccountsResponse.__fields__
+        :param users_fields: Кортеж с одним и более значений из GeneralUser.__fields__
+        :param paging_fields: Кортеж с одним и более значений из PagingResult.__fields__
         :param skip:
         :param number:
         :param size:
@@ -101,26 +104,23 @@ class GraphQLAccountApi:
             number=number,
             size=size
         )
-        accounts = accounts_fields or ()
-        users = users_fields or ()
-        paging = paging_fields or ()
         query_request.accounts(paging=query, with_inactive=with_inactive)
 
-        if accounts:
-            query_request.accounts.__fields__(*accounts)
+        if accounts_fields:
+            query_request.accounts.__fields__(*accounts_fields)
         else:
-            query_request.accounts.users.__fields__(*users)
-            query_request.accounts.paging.__fields__(*paging)
+            query_request.accounts.users.__fields__(*users_fields)
+            query_request.accounts.paging.__fields__(*paging_fields)
 
         response = self.client.request(query=query_request)
         response = self._convert_to_model(
             response=response,
             query_name=query_name,
-            model=EnvelopeOfUserDetails
+            model=AccountsResponse
         )
         return response
 
-    def activate_account(self, activation_token) -> EnvelopeOfUser | dict:
+    def activate_account(self, activation_token: str) -> EnvelopeOfUser | dict:
         query_name = 'activateAccount'
         mutation_request = self.client.mutation(name=query_name)
         mutation_request.activate_account(activation_token=activation_token)
@@ -132,7 +132,7 @@ class GraphQLAccountApi:
         )
         return response
 
-    def login_account(self, login, password, remember_me) -> AccountLoginResponse | dict:
+    def login_account(self, login: str, password: str, remember_me: bool) -> AccountLoginResponse | dict:
         query_name = 'loginAccount'
         mutation_request = self.client.mutation(name=query_name)
         login_credentials_input = LoginCredentialsInput(
