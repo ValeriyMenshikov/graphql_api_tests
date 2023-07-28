@@ -1,5 +1,5 @@
 from sgqlc.types import ContainerTypeMeta
-from apis.dm_api_account.graphql.schema.schema import (
+from modules.graphql.dm_api_account.schema import (
     schema,
     RegistrationInput,
     AccountRegisterResponse,

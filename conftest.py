@@ -1,8 +1,10 @@
 import pytest
 from datetime import datetime
-from apis.dm_api_account.graphql.account_api import GraphQLAccountApi
+
+from generic.helpers import LogicProvider
+from modules.graphql.dm_api_account.client import GraphQLAccountApi
 from collections import namedtuple
-from apis.mailhog_api.client import MailhogApi
+from modules.http.mailhog_api.client import MailhogApi
 
 
 @pytest.fixture
@@ -25,4 +27,13 @@ def graphql_account_api():
 @pytest.fixture
 def mailhog_api():
     client = MailhogApi(host='http://5.63.153.31:5025')
+    return client
+
+
+@pytest.fixture
+def logic(mailhog_api, graphql_account_api):
+    client = LogicProvider(
+        mailhog=mailhog_api,
+        account_graphql=graphql_account_api
+    )
     return client
