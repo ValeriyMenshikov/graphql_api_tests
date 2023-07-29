@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from datetime import datetime
 
@@ -5,6 +7,29 @@ from generic.helpers import LogicProvider
 from modules.graphql.dm_api_account.client import GraphQLAccountApi
 from collections import namedtuple
 from modules.http.mailhog_api.client import MailhogApi
+from vyper import v
+
+options = (
+    'service.dm_api_account_graphql',
+    'service.mailhog',
+)
+
+
+@pytest.fixture(autouse=True)
+def set_config(request):
+    config = Path(__file__).parent.joinpath('config')
+    config_name = request.config.getoption('--env')
+    v.set_config_name(config_name)
+    v.add_config_path(config)
+    v.read_in_config()
+    for option in options:
+        v.set(option, request.config.getoption(f'--{option}'))
+
+
+def pytest_addoption(parser):
+    parser.addoption('--env', action='store', default='stg')
+    for option in options:
+        parser.addoption(f'--{option}', action='store', default=None)
 
 
 @pytest.fixture
@@ -20,13 +45,13 @@ def prepare_user():
 
 @pytest.fixture
 def graphql_account_api():
-    client = GraphQLAccountApi(service_name='http://5.63.153.31:5051')
+    client = GraphQLAccountApi(service_name=v.get('service.dm_api_account_graphql'))
     return client
 
 
 @pytest.fixture
 def mailhog_api():
-    client = MailhogApi(host='http://5.63.153.31:5025')
+    client = MailhogApi(host=v.get('service.mailhog'))
     return client
 
 

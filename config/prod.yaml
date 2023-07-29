@@ -1,0 +1,5 @@
+service:
+  dm_api_account_graphql: http://5.63.153.31:5051
+  mailhog: http://5.63.153.31:5025
+
+
