@@ -1,6 +1,8 @@
 from sgqlc.types import ContainerTypeMeta
 from modules.graphql.dm_api_account.schema import (
     schema,
+    Mutation,
+    Query,
     RegistrationInput,
     AccountRegisterResponse,
     EnvelopeOfUserDetails,
@@ -10,7 +12,8 @@ from modules.graphql.dm_api_account.schema import (
     PagingQueryInput,
     AccountsResponse,
     GeneralUser,
-    PagingResult
+    PagingResult,
+    ChangeEmailInput
 )
 from commons.graphql_client.client import GraphQLClient
 
@@ -31,7 +34,22 @@ class GraphQLAccountApi:
             schema=schema
         )
 
-    def register_user(self, login: str, email: str, password: str) -> AccountRegisterResponse:
+    @staticmethod
+    def _convert_to_model(response: dict, query_name: str, model: ContainerTypeMeta):
+        """
+        Метод преобразует json dict ответ в соответсвующую ResponseModel, в противном случае отдает
+        полный json dict
+        :param response: GraphQL response
+        :param query_name: mutation or query name
+        :param model: GraphQL response model from schema
+        :return:
+        """
+        json_data = response.get('data', {}).get(query_name)
+        if json_data:
+            return model(json_data)
+        return response
+
+    def register_account(self, login: str, email: str, password: str) -> AccountRegisterResponse:
         """
         Регистрация пользователя.
         :param login:
@@ -49,21 +67,6 @@ class GraphQLAccountApi:
         json_data = self.client.request(query=mutation_request)["data"]["registerAccount"]
         result = AccountRegisterResponse(json_data)
         return result
-
-    @staticmethod
-    def _convert_to_model(response: dict, query_name: str, model: ContainerTypeMeta):
-        """
-        Метод преобразует json dict ответ в соответсвующую ResponseModel, в противном случае отдает
-        полный json dict
-        :param response: GraphQL response
-        :param query_name: mutation or query name
-        :param model: GraphQL response model from schema
-        :return:
-        """
-        json_data = response.get('data', {}).get(query_name)
-        if json_data:
-            return model(json_data)
-        return response
 
     def account_current(self, access_token: str) -> EnvelopeOfUserDetails | dict:
         """
@@ -169,5 +172,29 @@ class GraphQLAccountApi:
             response=response,
             query_name=query_name,
             model=AccountLoginResponse
+        )
+        return response
+
+    def change_account_email(self, login: str, password: str, email: str) -> EnvelopeOfUser | dict:
+        """
+        Сменить почту пользователя.
+        :param login:
+        :param password:
+        :param email:
+        :return:
+        """
+        query_name = 'changeAccountEmail'
+        mutation_request = self.client.mutation(name=query_name)
+        change_email_input = ChangeEmailInput(
+            login=login,
+            password=password,
+            email=email
+        )
+        mutation_request.change_account_email(change_email=change_email_input)
+        response = self.client.request(query=mutation_request)
+        response = self._convert_to_model(
+            response=response,
+            query_name=query_name,
+            model=EnvelopeOfUser
         )
         return response

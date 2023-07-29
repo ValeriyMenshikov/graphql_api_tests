@@ -3,3 +3,5 @@ def test_register_user(prepare_user, logic):
     email = prepare_user.email
     password = prepare_user.password
     logic.account_helper.register_account(login=login, email=email, password=password)
+    new_email = 'new_' + email
+    logic.account_graphql.change_account_email(login=login, password=password, email=new_email)

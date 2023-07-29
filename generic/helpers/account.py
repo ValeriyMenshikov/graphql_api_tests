@@ -3,8 +3,8 @@ class AccountHelper:
         from generic.helpers import LogicProvider
         self.logic_provider: LogicProvider = logic_provider
 
-    def register_user(self, login, email, password):
-        self.logic_provider.account_graphql.register_user(
+    def register_account(self, login, email, password):
+        self.logic_provider.account_graphql.register_account(
             login=login,
             email=email,
             password=password

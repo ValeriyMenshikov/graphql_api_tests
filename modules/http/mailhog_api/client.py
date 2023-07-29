@@ -4,7 +4,7 @@ from time import sleep
 
 
 class MailhogApi:
-    def __init__(self, host: str = "http://5.63.153.31:5025", disable_log=False) -> None:
+    def __init__(self, host: str, disable_log=False) -> None:
         self.host = host
         self.disable_log = disable_log
         self.client = requests.session()
