@@ -15,15 +15,15 @@
 
 ### Установка и запуск
 ```shell
- git clone https://github.com/ValeriyMenshikov/graphql_tests
- cd graphql_tests
+ git clone https://github.com/ValeriyMenshikov/graphql_api_tests
+ cd graphql_api_tests
  pip install -r requirements.txt
 ```
 
 ### Docker
 ```shell
-docker build -t graphql_tests . 
-docker run -it --rm graphql_tests
+docker build -t graphql_api_tests . 
+docker run -it --rm graphql_api_tests
 ```
  
 
