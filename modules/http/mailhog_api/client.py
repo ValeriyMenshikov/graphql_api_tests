@@ -1,4 +1,6 @@
 import json
+
+import allure
 import requests
 from time import sleep
 
@@ -9,6 +11,7 @@ class MailhogApi:
         self.disable_log = disable_log
         self.client = requests.session()
 
+    @allure.step("Получить список писем")
     def get_api_v2_messages(self, limit: int = 50) -> requests.Response:
         """
         Get messages by limit
@@ -24,6 +27,7 @@ class MailhogApi:
 
         return response
 
+    @allure.step("Получить токен из последнего письма")
     def get_token_from_last_email(self) -> str:
         """
         Get user activation token from last email
@@ -36,6 +40,7 @@ class MailhogApi:
         token = token_url.split("/")[-1]
         return token
 
+    @allure.step("Удалить все письма")
     def delete_all_messages(self) -> requests.Response:
         response = self.client.delete(url=f"{self.host}/api/v1/messages")
         return response

@@ -22,3 +22,4 @@ urllib3==2.0.4
 vyper-config==1.1.1
 watchdog==3.0.0
 pyhamcrest
+allure-pytest
