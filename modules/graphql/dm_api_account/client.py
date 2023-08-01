@@ -1,5 +1,7 @@
 import sgqlc
 from sgqlc.types import ContainerTypeMeta
+
+from modules.graphql.dm_api_account.errors import GraphQLClientError
 from modules.graphql.dm_api_account.schema import (
     schema,
     Mutation,
@@ -52,7 +54,7 @@ class GraphQLAccountApi:
         json_data = response.get('data', {}).get(query_name)
         if json_data:
             return model(json_data)
-        return response
+        raise GraphQLClientError(response)
 
     def register_account(self, login: str, email: str, password: str) -> AccountRegisterResponse:
         """
@@ -301,7 +303,7 @@ class GraphQLAccountApi:
         :param access_token:
         :return:
         """
-        query_name = 'logoutAccount'
+        query_name = 'logoutAllAccount'
         mutation_request = self.client.mutation(name=query_name)
         mutation_request.logout_all_account(access_token=access_token)
         response = self.client.request(query=mutation_request)
