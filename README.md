@@ -10,7 +10,7 @@
 
 ### Тестируемый сервис:
 **dm_api_account**
-* API: [swagger](http://5.63.153.31:5051/graphql)
+* API: [graphql](http://5.63.153.31:5051/graphql)
 
 
 ### Установка и запуск
