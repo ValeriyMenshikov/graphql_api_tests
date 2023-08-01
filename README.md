@@ -29,6 +29,7 @@ docker run -it --rm graphql_tests
 
 ### Используемые технологии
 <p  align="center">
+  <code><img width="5%" title="Pycharm" src="images/logo_stacks/graphql.png"></code>
   <code><img width="5%" title="Pycharm" src="images/logo_stacks/pycharm.png"></code>
   <code><img width="5%" title="Python" src="images/logo_stacks/python.png"></code>
   <code><img width="5%" title="Pytest" src="images/logo_stacks/pytest.png"></code>
