@@ -31,7 +31,8 @@ class MailhogApi:
         """
         sleep(2)
         emails = self.get_api_v2_messages(limit=1).json()
-        token_url = json.loads(emails["items"][0]["Content"]["Body"])["ConfirmationLinkUrl"]
+        data = json.loads(emails["items"][0]["Content"]["Body"])
+        token_url = data.get("ConfirmationLinkUrl") or data.get("ConfirmationLinkUri")
         token = token_url.split("/")[-1]
         return token
 

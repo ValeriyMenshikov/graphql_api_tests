@@ -1,3 +1,4 @@
+import sgqlc
 from sgqlc.types import ContainerTypeMeta
 from modules.graphql.dm_api_account.schema import (
     schema,
@@ -13,7 +14,11 @@ from modules.graphql.dm_api_account.schema import (
     AccountsResponse,
     GeneralUser,
     PagingResult,
-    ChangeEmailInput
+    ChangeEmailInput,
+    ResetPasswordInput,
+    ChangePasswordInput,
+    UpdateUserInput,
+    MutationResult
 )
 from commons.graphql_client.client import GraphQLClient
 
@@ -151,7 +156,7 @@ class GraphQLAccountApi:
         )
         return response
 
-    def login_account(self, login: str, password: str, remember_me: bool) -> AccountLoginResponse | dict:
+    def login_account(self, login: str, password: str, remember_me: bool = True) -> AccountLoginResponse | dict:
         """
         Авторизация пользователя.
         :param login:
@@ -196,5 +201,113 @@ class GraphQLAccountApi:
             response=response,
             query_name=query_name,
             model=EnvelopeOfUser
+        )
+        return response
+
+    def reset_account_password(self, login: str, email: str) -> EnvelopeOfUser | dict:
+        """
+        Сбросить пароль пользователя
+        :param login:
+        :param email:
+        :return:
+        """
+        query_name = 'resetAccountPassword'
+        mutation_request = self.client.mutation(name=query_name)
+        reset_password_input = ResetPasswordInput(
+            login=login,
+            email=email
+        )
+        mutation_request.reset_account_password(reset_password=reset_password_input)
+        response = self.client.request(query=mutation_request)
+        response = self._convert_to_model(
+            response=response,
+            query_name=query_name,
+            model=EnvelopeOfUser
+        )
+        return response
+
+    def change_account_password(self, login: str, token: str, old_password, new_password) -> EnvelopeOfUser | dict:
+        """
+        Завершить смену пароля пользователя.
+        :param login:
+        :param token: Токен сброса пароля пользователя
+        :param old_password:
+        :param new_password:
+        :return:
+        """
+        query_name = 'changeAccountPassword'
+        mutation_request = self.client.mutation(name=query_name)
+        reset_password_input = ChangePasswordInput(
+            login=login,
+            token=token,
+            old_password=old_password,
+            new_password=new_password
+        )
+        mutation_request.change_account_password(change_password=reset_password_input)
+        response = self.client.request(query=mutation_request)
+        response = self._convert_to_model(
+            response=response,
+            query_name=query_name,
+            model=EnvelopeOfUser
+        )
+        return response
+
+    def update_account(
+            self,
+            access_token: str,
+            **kwargs: dict[UpdateUserInput.__field_names__]
+    ) -> EnvelopeOfUserDetails | dict:
+        """
+        Обновить данные профиля текущего пользователя.
+        :param access_token:
+        :param kwargs:
+        :return:
+        """
+        query_name = 'updateAccount'
+        mutation_request = self.client.mutation(name=query_name)
+
+        update_user_input = UpdateUserInput()
+        for k, v in kwargs.items():
+            update_user_input.__setattr__(name=k, value=v)
+        mutation_request.update_account(access_token=access_token, user_data=update_user_input)
+        response = self.client.request(query=mutation_request)
+        response = self._convert_to_model(
+            response=response,
+            query_name=query_name,
+            model=EnvelopeOfUserDetails
+        )
+        return response
+
+    def logout_account(self, access_token: str) -> sgqlc.types.non_null(MutationResult) | dict:
+        """
+        Закрытие текущей сессии пользователя.
+        :param access_token:
+        :return:
+        """
+        query_name = 'logoutAccount'
+        mutation_request = self.client.mutation(name=query_name)
+        mutation_request.logout_account(access_token=access_token)
+        response = self.client.request(query=mutation_request)
+        response = self._convert_to_model(
+            response=response,
+            query_name=query_name,
+            model=sgqlc.types.non_null(MutationResult)
+        )
+        return response
+
+    def logout_all_account(self, access_token: str) -> sgqlc.types.non_null(MutationResult) | dict:
+        """
+        Закрытие всех сессий пользователя (кроме текущей).
+        :param access_token:
+        :return:
+        """
+        query_name = 'logoutAccount'
+        mutation_request = self.client.mutation(name=query_name)
+        mutation_request.logout_all_account(access_token=access_token)
+        response = self.client.request(query=mutation_request)
+        response = self._convert_to_model(
+            response=response,
+            query_name=query_name,
+            model=sgqlc.types.non_null(MutationResult)
         )
         return response

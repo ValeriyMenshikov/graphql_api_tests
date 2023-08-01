@@ -83,6 +83,17 @@ class PagingQueryInput(sgqlc.types.Input):
     size = sgqlc.types.Field(Int, graphql_name='size')
 
 
+class PagingSettingsInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = (
+    'posts_per_page', 'comments_per_page', 'topics_per_page', 'messages_per_page', 'entities_per_page')
+    posts_per_page = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='postsPerPage')
+    comments_per_page = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='commentsPerPage')
+    topics_per_page = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='topicsPerPage')
+    messages_per_page = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='messagesPerPage')
+    entities_per_page = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='entitiesPerPage')
+
+
 class RegistrationInput(sgqlc.types.Input):
     __schema__ = schema
     __field_names__ = ('login', 'email', 'password')
@@ -96,6 +107,29 @@ class ResetPasswordInput(sgqlc.types.Input):
     __field_names__ = ('login', 'email')
     login = sgqlc.types.Field(String, graphql_name='login')
     email = sgqlc.types.Field(String, graphql_name='email')
+
+
+class UpdateUserInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ('login', 'status', 'rating_disabled', 'name', 'location', 'icq', 'skype', 'info', 'settings')
+    login = sgqlc.types.Field(String, graphql_name='login')
+    status = sgqlc.types.Field(String, graphql_name='status')
+    rating_disabled = sgqlc.types.Field(Boolean, graphql_name='ratingDisabled')
+    name = sgqlc.types.Field(String, graphql_name='name')
+    location = sgqlc.types.Field(String, graphql_name='location')
+    icq = sgqlc.types.Field(String, graphql_name='icq')
+    skype = sgqlc.types.Field(String, graphql_name='skype')
+    info = sgqlc.types.Field(String, graphql_name='info')
+    settings = sgqlc.types.Field('UserSettingsInput', graphql_name='settings')
+
+
+class UserSettingsInput(sgqlc.types.Input):
+    __schema__ = schema
+    __field_names__ = ('id', 'nanny_greetings_message', 'color_schema', 'paging')
+    id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name='id')
+    nanny_greetings_message = sgqlc.types.Field(String, graphql_name='nannyGreetingsMessage')
+    color_schema = sgqlc.types.Field(sgqlc.types.non_null(ColorSchema), graphql_name='colorSchema')
+    paging = sgqlc.types.Field(PagingSettingsInput, graphql_name='paging')
 
 
 ########################################################################
@@ -164,11 +198,18 @@ class InfoBbText(sgqlc.types.Type):
     value = sgqlc.types.Field(String, graphql_name='value')
 
 
+class LoginEvent(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ('login', 'timestamp')
+    login = sgqlc.types.Field(String, graphql_name='login')
+    timestamp = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='timestamp')
+
+
 class Mutation(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
     'register_account', 'activate_account', 'change_account_email', 'reset_account_password', 'change_account_password',
-    'login_account', 'logout_account', 'logout_all_account')
+    'update_account', 'login_account', 'logout_account', 'logout_all_account')
     register_account = sgqlc.types.Field(AccountRegisterResponse, graphql_name='registerAccount',
                                          args=sgqlc.types.ArgDict((
                                              ('registration',
@@ -201,6 +242,11 @@ class Mutation(sgqlc.types.Type):
                                                                      default=None)),
                                                 ))
                                                 )
+    update_account = sgqlc.types.Field(EnvelopeOfUserDetails, graphql_name='updateAccount', args=sgqlc.types.ArgDict((
+        ('access_token', sgqlc.types.Arg(String, graphql_name='accessToken', default=None)),
+        ('user_data', sgqlc.types.Arg(UpdateUserInput, graphql_name='userData', default=None)),
+    ))
+                                       )
     login_account = sgqlc.types.Field(AccountLoginResponse, graphql_name='loginAccount', args=sgqlc.types.ArgDict((
         ('login', sgqlc.types.Arg(LoginCredentialsInput, graphql_name='login', default=None)),
     ))
@@ -262,6 +308,12 @@ class Rating(sgqlc.types.Type):
     quantity = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='quantity')
 
 
+class Subscription(sgqlc.types.Type):
+    __schema__ = schema
+    __field_names__ = ('user_login',)
+    user_login = sgqlc.types.Field(LoginEvent, graphql_name='userLogin')
+
+
 class User(sgqlc.types.Type):
     __schema__ = schema
     __field_names__ = (
@@ -318,4 +370,4 @@ class UserSettings(sgqlc.types.Type):
 ########################################################################
 schema.query_type = Query
 schema.mutation_type = Mutation
-schema.subscription_type = None
+schema.subscription_type = Subscription
