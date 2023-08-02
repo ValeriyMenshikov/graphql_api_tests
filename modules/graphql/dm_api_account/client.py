@@ -7,6 +7,7 @@ from modules.graphql.dm_api_account.schema import (
     schema,
     Mutation,
     Query,
+    Subscription,
     RegistrationInput,
     AccountRegisterResponse,
     EnvelopeOfUserDetails,
@@ -21,7 +22,8 @@ from modules.graphql.dm_api_account.schema import (
     ResetPasswordInput,
     ChangePasswordInput,
     UpdateUserInput,
-    MutationResult
+    MutationResult,
+    LoginEvent
 )
 from commons.graphql_client.client import GraphQLClient
 from modules.graphql.dm_api_account.utils import allure_attach as attach
@@ -378,3 +380,9 @@ class GraphQLAccountApi:
             model=sgqlc.types.non_null(MutationResult)
         )
         return response
+
+    def user_login_subscription(self) -> LoginEvent:
+        subscription = self.client.subscription()
+        subscription.user_login()
+        for message in self.client.sub(subscription):
+            return message
