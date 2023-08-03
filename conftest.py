@@ -6,11 +6,14 @@ from datetime import datetime
 from generic.helpers import LogicProvider
 from modules.graphql.dm_api_account.client import GraphQLAccountApi
 from collections import namedtuple
+
+from modules.graphql.dm_api_account.ws_client import GraphQLWebSocketAccountApi
 from modules.http.mailhog_api.client import MailhogApi
 from vyper import v
 
 options = (
     'service.dm_api_account_graphql',
+    'service.dm_api_account_graphql_ws',
     'service.mailhog',
 )
 
@@ -46,6 +49,15 @@ def prepare_user():
 @pytest.fixture
 def graphql_account_api():
     client = GraphQLAccountApi(service_name=v.get('service.dm_api_account_graphql'))
+    return client
+
+
+@pytest.fixture
+def graphql_account_ws():
+    client = GraphQLWebSocketAccountApi(
+        service_name=v.get('service.dm_api_account_graphql_ws'),
+        timeout=10,
+    )
     return client
 
 

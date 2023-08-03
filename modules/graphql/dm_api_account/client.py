@@ -380,9 +380,3 @@ class GraphQLAccountApi:
             model=sgqlc.types.non_null(MutationResult)
         )
         return response
-
-    def user_login_subscription(self) -> LoginEvent:
-        subscription = self.client.subscription()
-        subscription.user_login()
-        for message in self.client.sub(subscription):
-            return message
