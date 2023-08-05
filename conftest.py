@@ -1,14 +1,9 @@
 from pathlib import Path
-
 import pytest
 from datetime import datetime
-
-from generic.helpers import LogicProvider
-from modules.graphql.dm_api_account.client import GraphQLAccountApi
+from generic import LogicProvider
 from collections import namedtuple
-
 from modules.graphql.dm_api_account.ws_client import GraphQLWebSocketAccountApi
-from modules.http.mailhog_api.client import MailhogApi
 from vyper import v
 
 options = (
@@ -47,12 +42,6 @@ def prepare_user():
 
 
 @pytest.fixture
-def graphql_account_api():
-    client = GraphQLAccountApi(service_name=v.get('service.dm_api_account_graphql'))
-    return client
-
-
-@pytest.fixture
 def graphql_account_ws():
     client = GraphQLWebSocketAccountApi(
         service_name=v.get('service.dm_api_account_graphql_ws'),
@@ -62,15 +51,6 @@ def graphql_account_ws():
 
 
 @pytest.fixture
-def mailhog_api():
-    client = MailhogApi(host=v.get('service.mailhog'))
-    return client
-
-
-@pytest.fixture
-def logic(mailhog_api, graphql_account_api):
-    client = LogicProvider(
-        mailhog=mailhog_api,
-        account_graphql=graphql_account_api
-    )
+def logic():
+    client = LogicProvider()
     return client
