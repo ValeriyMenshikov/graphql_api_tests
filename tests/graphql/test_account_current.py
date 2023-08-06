@@ -1,4 +1,7 @@
+from datetime import datetime
+
 import allure
+from hamcrest import assert_that, has_properties, instance_of
 
 
 @allure.suite("Тесты на проверку метода account_current")
@@ -19,4 +22,9 @@ class TestAccountCurrentPositive:
             password=password,
             remember_me=True
         ).token
-        logic.provider.graphql.dm_api_account.account_current(access_token=access_token)
+        response = logic.provider.graphql.dm_api_account.account_current(access_token=access_token)
+        assert_that(response.resource, has_properties(dict(
+            login=login,
+            online=instance_of(datetime),
+            registration=instance_of(datetime),
+        )))

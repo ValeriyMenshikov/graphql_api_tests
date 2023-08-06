@@ -1,4 +1,7 @@
 import allure
+from hamcrest import assert_that, has_properties
+
+from modules.graphql.dm_api_account.schema import PagingResult
 
 
 @allure.suite("Тесты на проверку метода account")
@@ -12,3 +15,4 @@ class TestAccountsPositive:
             users_fields=users_fields,
             paging_fields=paging_fields
         )
+        assert_that(result.paging, has_properties(dict(page_size=10)))
