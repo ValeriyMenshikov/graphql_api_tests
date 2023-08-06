@@ -10,5 +10,6 @@ class AccountHelper:
             password=password
         )
         activation_token = self.logic_provider.provider.http.mailhog.get_token_from_last_email()
-        response = self.logic_provider.provider.graphql.dm_api_account.activate_account(activation_token=activation_token)
+        response = self.logic_provider.provider.graphql.dm_api_account.activate_account(
+            activation_token=activation_token)
         return response

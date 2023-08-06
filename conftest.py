@@ -3,7 +3,6 @@ import pytest
 from datetime import datetime
 from generic import LogicProvider
 from collections import namedtuple
-from modules.graphql.dm_api_account.ws_client import GraphQLWebSocketAccountApi
 from vyper import v
 
 options = (
@@ -39,15 +38,6 @@ def prepare_user():
     password = '12345678'
     user = namedtuple('User', 'login, email, password')
     return user(login=login, email=email, password=password)
-
-
-@pytest.fixture
-def graphql_account_ws():
-    client = GraphQLWebSocketAccountApi(
-        service_name=v.get('service.dm_api_account_graphql_ws'),
-        timeout=10,
-    )
-    return client
 
 
 @pytest.fixture

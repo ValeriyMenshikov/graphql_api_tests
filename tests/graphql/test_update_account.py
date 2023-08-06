@@ -10,5 +10,5 @@ class TestUpdateAccountPositive:
         email = prepare_user.email
         password = prepare_user.password
         logic.account_helper.register_account(login=login, email=email, password=password)
-        access_token = logic.account_graphql.login_account(login=login, password=password).token
-        logic.account_graphql.update_account(access_token=access_token, name='Vasya')
+        access_token = logic.provider.graphql.dm_api_account.login_account(login=login, password=password).token
+        logic.provider.graphql.dm_api_account.update_account(access_token=access_token, name='Vasya')

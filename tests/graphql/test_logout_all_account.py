@@ -12,8 +12,8 @@ class TestLogoutAllAccountPositive:
         email = prepare_user.email
         password = prepare_user.password
         logic.account_helper.register_account(login=login, email=email, password=password)
-        access_token = logic.account_graphql.login_account(login=login, password=password).token
-        logic.account_graphql.logout_all_account(access_token=access_token)
+        access_token = logic.provider.graphql.dm_api_account.login_account(login=login, password=password).token
+        logic.provider.graphql.dm_api_account.logout_all_account(access_token=access_token)
 
 
 @allure.suite("Тесты на проверку метода logout_all_account")
@@ -25,7 +25,7 @@ class TestLogoutAllAccountNegative:
         email = prepare_user.email
         password = prepare_user.password
         logic.account_helper.register_account(login=login, email=email, password=password)
-        access_token = logic.account_graphql.login_account(login=login, password=password).token
+        access_token = logic.provider.graphql.dm_api_account.login_account(login=login, password=password).token
         invalid_token = access_token + '1'
         with message_checker(error_message="Not authorized: ForgedToken"):
-            logic.account_graphql.logout_all_account(access_token=invalid_token)
+            logic.provider.graphql.dm_api_account.logout_all_account(access_token=invalid_token)

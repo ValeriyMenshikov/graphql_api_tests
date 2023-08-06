@@ -7,7 +7,6 @@ from modules.graphql.dm_api_account.schema import (
     schema,
     Mutation,
     Query,
-    Subscription,
     RegistrationInput,
     AccountRegisterResponse,
     EnvelopeOfUserDetails,
@@ -23,7 +22,6 @@ from modules.graphql.dm_api_account.schema import (
     ChangePasswordInput,
     UpdateUserInput,
     MutationResult,
-    LoginEvent
 )
 from commons.graphql_client.client import GraphQLClient
 from modules.graphql.dm_api_account.utils import allure_attach as attach

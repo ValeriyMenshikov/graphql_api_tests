@@ -12,7 +12,7 @@ class TestLoginAccountPositive:
         email = prepare_user.email
         password = prepare_user.password
         logic.account_helper.register_account(login=login, email=email, password=password)
-        access_token = logic.account_graphql.login_account(login=login, password=password).token
+        access_token = logic.provider.graphql.dm_api_account.login_account(login=login, password=password).token
         assert access_token, 'Пользователь смог авторизоваться'
 
 
@@ -27,4 +27,4 @@ class TestLoginAccountNegative:
         logic.account_helper.register_account(login=login, email=email, password=password)
         invalid_password = password + '1'
         with message_checker(error_message="The password is incorrect. Did you forget to switch the keyboard?"):
-            logic.account_graphql.login_account(login=login, password=invalid_password)
+            logic.provider.graphql.dm_api_account.login_account(login=login, password=invalid_password)
