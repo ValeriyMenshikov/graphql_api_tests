@@ -1,6 +1,6 @@
 import allure
 import sgqlc
-from sgqlc.types import ContainerTypeMeta
+from sgqlc.types import ContainerTypeMeta, non_null
 
 from modules.graphql.dm_api_account.errors import GraphQLClientError
 from modules.graphql.dm_api_account.schema import (
@@ -336,7 +336,7 @@ class GraphQLAccountApi:
         return response
 
     @allure.step('Закрыть текущую сессию пользователя.')
-    def logout_account(self, access_token: str) -> sgqlc.types.non_null(MutationResult) | dict:
+    def logout_account(self, access_token: str) -> non_null(MutationResult) | dict:
         """
         Закрытие текущей сессии пользователя.
         :param access_token:
@@ -353,12 +353,12 @@ class GraphQLAccountApi:
         response = self._convert_to_model(
             response=response,
             query_name=query_name,
-            model=sgqlc.types.non_null(MutationResult)
+            model=non_null(MutationResult)
         )
         return response
 
     @allure.step('Закрыть все сессии пользователя (кроме текущей).')
-    def logout_all_account(self, access_token: str) -> sgqlc.types.non_null(MutationResult) | dict:
+    def logout_all_account(self, access_token: str) -> non_null(MutationResult) | dict:
         """
         Закрытие всех сессий пользователя (кроме текущей).
         :param access_token:
@@ -375,6 +375,6 @@ class GraphQLAccountApi:
         response = self._convert_to_model(
             response=response,
             query_name=query_name,
-            model=sgqlc.types.non_null(MutationResult)
+            model=non_null(MutationResult)
         )
         return response
