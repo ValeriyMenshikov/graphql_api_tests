@@ -24,7 +24,7 @@ def set_config(request):
 
 
 def pytest_addoption(parser):
-    parser.addoption('--env', action='store', default='stg')
+    parser.addoption('--env', action='store', default='prod')
     for option in options:
         parser.addoption(f'--{option}', action='store', default=None)
 
