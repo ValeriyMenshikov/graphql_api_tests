@@ -55,7 +55,7 @@ async def test_subscription_run_in_executor_gather(logic, prepare_user):
     loop = asyncio.get_event_loop()
     coroutines = [
         loop.run_in_executor(None, logic.provider.graphql.dm_api_account_ws.user_login_subscription, login),
-        loop.run_in_executor(None, timeout(2)(logic.provider.graphql.dm_api_account.login_account), login, password,
+        loop.run_in_executor(None, timeout(0.1)(logic.provider.graphql.dm_api_account.login_account), login, password,
                              True)
     ]
     res = await asyncio.gather(*coroutines)
@@ -71,9 +71,12 @@ async def test_subscription_thread_task(logic, prepare_user):
     listen = asyncio.create_task(
         asyncio.to_thread(logic.provider.graphql.dm_api_account_ws.user_login_subscription, login)
     )
+    await asyncio.sleep(1)
     send = asyncio.create_task(
-        asyncio.to_thread(timeout(0.1)(logic.provider.graphql.dm_api_account.login_account), login, password, True)
+        asyncio.to_thread(logic.provider.graphql.dm_api_account.login_account, login, password, True)
     )
 
-    listen_result = await send
-    send_result = await listen
+    listen_result = await listen
+    send_result = await send
+    print(send_result)
+    print(listen_result)
