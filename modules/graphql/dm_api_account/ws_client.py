@@ -1,6 +1,6 @@
 import json
 
-# from websocket import WebSocketTimeoutException
+from websocket import WebSocketTimeoutException
 
 from commons.graphql_client.web_socket import GraphQLWebSocketClient
 from modules.graphql.dm_api_account.schema import schema, LoginEvent
@@ -24,13 +24,13 @@ class GraphQLWebSocketAccountApi:
         )
         self.messages = []
 
-    def user_login_subscription(self) -> LoginEvent:
+    def user_login_subscription(self, login) -> LoginEvent:
         subscription = self.client.subscription_operation()
         subscription.user_login()
         try:
             for message in self.client.subscription(query=subscription):
                 model = LoginEvent(message['data']['userLogin'])
-                self.messages.append(model)
-                return model
-        except: # WebSocketTimeoutException:
+                if login == model.login:
+                    return model
+        except WebSocketTimeoutException:
             raise AssertionError('Сообщение не было найдено!')
