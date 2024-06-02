@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.10"
       - name: install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements_socket.txt
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v3
       - name: Run tests
@@ -68,4 +68,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1.2.9
-      - run: echo https://valeriymenshikov.github.io/rest_api_tests/
+      - run: echo https://valeriymenshikov.github.io/graphql_api_tests/
